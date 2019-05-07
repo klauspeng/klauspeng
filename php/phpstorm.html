@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>PHPStorm 常用配置及问题 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="设置Terminal字体在Editor-&amp;gt;Colors &amp;amp; Fonts -&amp;gt; Console Font设置 取消注释斜体参考文章 多个项目不同版本控制 File-&amp;gt;settings-&amp;gt;Version Control-&amp;gt;点➕，添加对应的项目即可  git设置Path to Git executable:D:\Program Files (x86)\Git\cmd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHPStorm 常用配置及问题">
+<meta property="og:url" content="https://klauspeng.github.io/php/phpstorm.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="设置Terminal字体在Editor-&amp;gt;Colors &amp;amp; Fonts -&amp;gt; Console Font设置 取消注释斜体参考文章 多个项目不同版本控制 File-&amp;gt;settings-&amp;gt;Version Control-&amp;gt;点➕，添加对应的项目即可  git设置Path to Git executable:D:\Program Files (x86)\Git\cmd">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/klauspeng/notes/raw/master/img/phpstorm_comment.png">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHPStorm 常用配置及问题">
+<meta name="twitter:description" content="设置Terminal字体在Editor-&amp;gt;Colors &amp;amp; Fonts -&amp;gt; Console Font设置 取消注释斜体参考文章 多个项目不同版本控制 File-&amp;gt;settings-&amp;gt;Version Control-&amp;gt;点➕，添加对应的项目即可  git设置Path to Git executable:D:\Program Files (x86)\Git\cmd">
+<meta name="twitter:image" content="https://github.com/klauspeng/notes/raw/master/img/phpstorm_comment.png">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#设置Terminal字体"><span class="toc-text">设置Terminal字体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#取消注释斜体"><span class="toc-text">取消注释斜体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多个项目不同版本控制"><span class="toc-text">多个项目不同版本控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git设置"><span class="toc-text">git设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#激活"><span class="toc-text">激活</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单行注释设置"><span class="toc-text">单行注释设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#快捷键"><span class="toc-text">快捷键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插件"><span class="toc-text">插件</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-php/phpstorm" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">PHPStorm 常用配置及问题</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.06.30</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="设置Terminal字体"><a href="#设置Terminal字体" class="headerlink" title="设置Terminal字体"></a>设置Terminal字体</h2><p>在Editor-&gt;Colors &amp; Fonts -&gt; Console Font设置</p>
+<h2 id="取消注释斜体"><a href="#取消注释斜体" class="headerlink" title="取消注释斜体"></a>取消注释斜体</h2><p><a href="http://www.cnblogs.com/pthlp/p/6440556.html" target="_blank" rel="noopener">参考文章</a></p>
+<h2 id="多个项目不同版本控制"><a href="#多个项目不同版本控制" class="headerlink" title="多个项目不同版本控制"></a>多个项目不同版本控制</h2><blockquote>
+<p>File-&gt;settings-&gt;Version Control-&gt;点➕，添加对应的项目即可</p>
+</blockquote>
+<h2 id="git设置"><a href="#git设置" class="headerlink" title="git设置"></a>git设置</h2><p>Path to Git executable:<code>D:\Program Files (x86)\Git\cmd\git.exe</code></p>
+<p>ssh: settings–&gt;Version Control–&gt;Git ,and then, In the SSH executable dropdown, choose Native</p>
+<h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><p><a href="http://blog.csdn.net/hywerr/article/details/72084061" target="_blank" rel="noopener">参考文章</a></p>
+<h2 id="单行注释设置"><a href="#单行注释设置" class="headerlink" title="单行注释设置"></a>单行注释设置</h2><p>方法里面的单行注释我喜欢，根据方法缩进，并且与<code>//</code>之后有一个空格，有点强迫症，哈哈！  </p>
+<p>设置如下：</p>
+<ol>
+<li>Setting-&gt;Editor-&gt;Code Style-&gt;PHP-&gt;Wrapping and Braces-&gt;勾选掉Comment at first column </li>
+<li>Setting-&gt;Editor-&gt;Code Style-&gt;PHP-&gt;Other-&gt;Comment Code-&gt;勾选掉Line comment at first column，并勾选中Add a space at comment start</li>
+</ol>
+<p>效果如下：<br><img src="https://github.com/klauspeng/notes/raw/master/img/phpstorm_comment.png" alt="单行注释效果"></p>
+<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>功能</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ctrl+Alt+O</td>
+<td>去除无用<code>use</code>,让代码更整洁</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><p><a href="https://github.com/YiiGuxing/TranslationPlugin" target="_blank" rel="noopener">翻译插件</a></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/php/php-log.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/php/lnmp.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

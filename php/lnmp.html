@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>LNMP环境搭建--Centos7 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="在Centos7环境安装LAMP环境，备忘哈哈。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LNMP环境搭建--Centos7">
+<meta property="og:url" content="https://klauspeng.github.io/php/lnmp.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="在Centos7环境安装LAMP环境，备忘哈哈。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.287Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LNMP环境搭建--Centos7">
+<meta name="twitter:description" content="在Centos7环境安装LAMP环境，备忘哈哈。">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备"><span class="toc-text">准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译安装php"><span class="toc-text">编译安装php</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装依赖"><span class="toc-text">安装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译参数"><span class="toc-text">编译参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置环境变量"><span class="toc-text">配置环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置php-fpm-需要在安装软件包目录"><span class="toc-text">配置php-fpm  需要在安装软件包目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#增加用户组和用户"><span class="toc-text">增加用户组和用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动php-fpm"><span class="toc-text">启动php-fpm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开机启动"><span class="toc-text">开机启动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装nginx"><span class="toc-text">安装nginx</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装依赖-1"><span class="toc-text">安装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译"><span class="toc-text">编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭防火墙-可选"><span class="toc-text">关闭防火墙(可选)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开机启动-1"><span class="toc-text">开机启动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装mysql"><span class="toc-text">安装mysql</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-php/lnmp" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">LNMP环境搭建--Centos7</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.09.21</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/centos/">centos</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>在Centos7环境安装LAMP环境，备忘哈哈。</p>
+<a id="more"></a>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>首先去官网下载php，nginx</p>
+<h2 id="编译安装php"><a href="#编译安装php" class="headerlink" title="编译安装php"></a>编译安装php</h2><h3 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install epel-release</span><br><span class="line">yum -y install libxml2 libxml2-devel openssl openssl-devel bzip2 bzip2-devel libcurl libcurl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel gmp gmp-devel libmcrypt libmcrypt-devel readline readline-devel libxslt libxslt-devel</span><br></pre></td></tr></table></figure>
+<h3 id="编译参数"><a href="#编译参数" class="headerlink" title="编译参数"></a>编译参数</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">./configure \</span><br><span class="line">--prefix=/usr/local/php \</span><br><span class="line">--with-config-file-path=/etc \</span><br><span class="line">--enable-fpm \</span><br><span class="line">--with-fpm-user=nginx  \</span><br><span class="line">--with-fpm-group=nginx \</span><br><span class="line">--enable-inline-optimization \</span><br><span class="line">--disable-debug \</span><br><span class="line">--disable-rpath \</span><br><span class="line">--enable-shared  \</span><br><span class="line">--enable-soap \</span><br><span class="line">--with-libxml-dir \</span><br><span class="line">--with-xmlrpc \</span><br><span class="line">--with-openssl \</span><br><span class="line">--with-mcrypt \</span><br><span class="line">--with-mhash \</span><br><span class="line">--with-pcre-regex \</span><br><span class="line">--with-sqlite3 \</span><br><span class="line">--with-zlib \</span><br><span class="line">--enable-bcmath \</span><br><span class="line">--with-iconv \</span><br><span class="line">--with-bz2 \</span><br><span class="line">--enable-calendar \</span><br><span class="line">--with-curl \</span><br><span class="line">--with-cdb \</span><br><span class="line">--enable-dom \</span><br><span class="line">--enable-exif \</span><br><span class="line">--enable-fileinfo \</span><br><span class="line">--enable-filter \</span><br><span class="line">--with-pcre-dir \</span><br><span class="line">--enable-ftp \</span><br><span class="line">--with-gd \</span><br><span class="line">--with-openssl-dir \</span><br><span class="line">--with-jpeg-dir \</span><br><span class="line">--with-png-dir \</span><br><span class="line">--with-zlib-dir  \</span><br><span class="line">--with-freetype-dir \</span><br><span class="line">--enable-gd-native-ttf \</span><br><span class="line">--enable-gd-jis-conv \</span><br><span class="line">--with-gettext \</span><br><span class="line">--with-gmp \</span><br><span class="line">--with-mhash \</span><br><span class="line">--enable-json \</span><br><span class="line">--enable-mbstring \</span><br><span class="line">--enable-mbregex \</span><br><span class="line">--enable-mbregex-backtrack \</span><br><span class="line">--with-libmbfl \</span><br><span class="line">--with-onig \</span><br><span class="line">--enable-pdo \</span><br><span class="line">--with-mysqli=mysqlnd \</span><br><span class="line">--with-pdo-mysql=mysqlnd \</span><br><span class="line">--with-zlib-dir \</span><br><span class="line">--with-pdo-sqlite \</span><br><span class="line">--with-readline \</span><br><span class="line">--enable-session \</span><br><span class="line">--enable-shmop \</span><br><span class="line">--enable-simplexml \</span><br><span class="line">--enable-sockets  \</span><br><span class="line">--enable-sysvmsg \</span><br><span class="line">--enable-sysvsem \</span><br><span class="line">--enable-sysvshm \</span><br><span class="line">--enable-wddx \</span><br><span class="line">--with-libxml-dir \</span><br><span class="line">--with-xsl \</span><br><span class="line">--enable-zip \</span><br><span class="line">--enable-mysqlnd-compression-support \</span><br><span class="line">--with-pear \</span><br><span class="line">--enable-fastcgi \</span><br><span class="line">--enable-opcache</span><br></pre></td></tr></table></figure>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p><code>make &amp;&amp; make install</code></p>
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br><span class="line"><span class="meta">#</span> 末尾追加</span><br><span class="line">export PATH=/usr/local/php/bin:$PATH</span><br><span class="line">source /etc/profile</span><br><span class="line">php -v #应该能看到php版本信息</span><br></pre></td></tr></table></figure>
+<h3 id="配置php-fpm-需要在安装软件包目录"><a href="#配置php-fpm-需要在安装软件包目录" class="headerlink" title="配置php-fpm  需要在安装软件包目录"></a>配置php-fpm  需要在安装软件包目录</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp php.ini-production /etc/php.ini</span><br><span class="line">cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf</span><br><span class="line">cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf</span><br><span class="line">cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm</span><br><span class="line">chmod a+x /etc/init.d/php-fpm</span><br></pre></td></tr></table></figure>
+<h3 id="增加用户组和用户"><a href="#增加用户组和用户" class="headerlink" title="增加用户组和用户"></a>增加用户组和用户</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">groupadd nginx</span><br><span class="line">useradd -g nginx nginx</span><br></pre></td></tr></table></figure>
+<h3 id="启动php-fpm"><a href="#启动php-fpm" class="headerlink" title="启动php-fpm"></a>启动php-fpm</h3><p><code>/etc/init.d/php-fpm start</code></p>
+<h3 id="开机启动"><a href="#开机启动" class="headerlink" title="开机启动"></a>开机启动</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 加入服务</span><br><span class="line">chkconfig --add php-fpm</span><br><span class="line"><span class="meta">#</span> 开机自启	    </span><br><span class="line">chkconfig php-fpm on</span><br></pre></td></tr></table></figure>
+<h2 id="安装nginx"><a href="#安装nginx" class="headerlink" title="安装nginx"></a>安装nginx</h2><h3 id="安装依赖-1"><a href="#安装依赖-1" class="headerlink" title="安装依赖"></a>安装依赖</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel</span><br></pre></td></tr></table></figure>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configer</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<h3 id="关闭防火墙-可选"><a href="#关闭防火墙-可选" class="headerlink" title="关闭防火墙(可选)"></a>关闭防火墙(可选)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service #停止firewall</span><br><span class="line">systemctl disable firewalld.service #禁止firewall开机启动</span><br></pre></td></tr></table></figure>
+<h3 id="开机启动-1"><a href="#开机启动-1" class="headerlink" title="开机启动"></a>开机启动</h3><p><a href="http://blog.csdn.net/zc474235918/article/details/51794083?foxhandler=RssReadRenderProcessHandler" target="_blank" rel="noopener">脚本</a><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chmod a+x /etc/init.d/nginx</span><br><span class="line">chkconfig --add nginx</span><br><span class="line">chkconfig nginx on</span><br></pre></td></tr></table></figure></p>
+<h2 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span># 安装</span><br><span class="line">yum -y install mariadb mariadb-server</span><br><span class="line"><span class="meta">#</span> 启动mariadb</span><br><span class="line">systemctl start mariadb </span><br><span class="line"><span class="meta">#</span> 开机自启动</span><br><span class="line">systemctl enable mariadb </span><br><span class="line"><span class="meta">#</span> 设置 root密码等相关</span><br><span class="line">mysql_secure_installation</span><br></pre></td></tr></table></figure>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/php/phpstorm.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/php/ltrim.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

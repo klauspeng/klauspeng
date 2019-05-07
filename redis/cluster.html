@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Redis集群 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="参考文章Redis集群为什么redis哨兵集群只有2个节点无法正常工作？ 为什么最少三个master节点？因为投票机制集群中节点的fail是通过集群中超过半数的节点检测失效时才生效例如只有两个节点,挂掉一个,剩下一个投票是不会超过50%的,所以最少要三个节点 搭建需编译安装！！！ 123yum install rubyyum install rubygemsgem install redis 如提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis集群">
+<meta property="og:url" content="https://klauspeng.github.io/redis/cluster.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="参考文章Redis集群为什么redis哨兵集群只有2个节点无法正常工作？ 为什么最少三个master节点？因为投票机制集群中节点的fail是通过集群中超过半数的节点检测失效时才生效例如只有两个节点,挂掉一个,剩下一个投票是不会超过50%的,所以最少要三个节点 搭建需编译安装！！！ 123yum install rubyyum install rubygemsgem install redis 如提">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.293Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis集群">
+<meta name="twitter:description" content="参考文章Redis集群为什么redis哨兵集群只有2个节点无法正常工作？ 为什么最少三个master节点？因为投票机制集群中节点的fail是通过集群中超过半数的节点检测失效时才生效例如只有两个节点,挂掉一个,剩下一个投票是不会超过50%的,所以最少要三个节点 搭建需编译安装！！！ 123yum install rubyyum install rubygemsgem install redis 如提">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文章"><span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么最少三个master节点？"><span class="toc-text">为什么最少三个master节点？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#搭建"><span class="toc-text">搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP连接集群"><span class="toc-text">PHP连接集群</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-redis/cluster" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Redis集群</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.08.21</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p><a href="https://www.cnblogs.com/cjsblog/p/9048545.html" target="_blank" rel="noopener">Redis集群</a><br><a href="https://blog.csdn.net/qq_25868207/article/details/79147469" target="_blank" rel="noopener">为什么redis哨兵集群只有2个节点无法正常工作？</a></p>
+<h3 id="为什么最少三个master节点？"><a href="#为什么最少三个master节点？" class="headerlink" title="为什么最少三个master节点？"></a>为什么最少三个master节点？</h3><p>因为投票机制<br>集群中节点的fail是通过集群中超过半数的节点检测失效时才生效<br>例如只有两个节点,挂掉一个,剩下一个投票是不会超过50%的,所以最少要三个节点</p>
+<h3 id="搭建"><a href="#搭建" class="headerlink" title="搭建"></a>搭建</h3><p>需编译安装！！！</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install ruby</span><br><span class="line">yum install rubygems</span><br><span class="line">gem install redis</span><br></pre></td></tr></table></figure>
+<p>如提示Ruby版本需升级：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB</span><br><span class="line">curl -sSL https://get.rvm.io | bash -s stable</span><br><span class="line">source /etc/profile.d/rvm.sh</span><br><span class="line">rvm list known</span><br><span class="line">rvm install 2.4.1</span><br></pre></td></tr></table></figure></p>
+<p>用create-cluster创建集群：  </p>
+<ol>
+<li>进入utils/create-cluster，可以看README</li>
+<li><code>create-cluster start</code></li>
+<li><code>create-cluster create</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"># ./create-cluster create</span><br><span class="line">&gt;&gt;&gt; Creating cluster</span><br><span class="line">&gt;&gt;&gt; Performing hash slots allocation on 8 nodes...</span><br><span class="line">Using 4 masters:</span><br><span class="line">127.0.0.1:30001</span><br><span class="line">127.0.0.1:30002</span><br><span class="line">127.0.0.1:30003</span><br><span class="line">127.0.0.1:30004</span><br><span class="line">Adding replica 127.0.0.1:30005 to 127.0.0.1:30001</span><br><span class="line">Adding replica 127.0.0.1:30006 to 127.0.0.1:30002</span><br><span class="line">Adding replica 127.0.0.1:30007 to 127.0.0.1:30003</span><br><span class="line">Adding replica 127.0.0.1:30008 to 127.0.0.1:30004</span><br><span class="line">M: 684c87a4466ad65feb91964556d842c6f002faa3 127.0.0.1:30001</span><br><span class="line">   slots:0-4095 (4096 slots) master</span><br><span class="line">M: 3da9d9481730d373f08627cab3c273fe616e7a0a 127.0.0.1:30002</span><br><span class="line">   slots:4096-8191 (4096 slots) master</span><br><span class="line">M: ea8ce815984589a12c5d183de6efd005e080bad4 127.0.0.1:30003</span><br><span class="line">   slots:8192-12287 (4096 slots) master</span><br><span class="line">M: 1dc55a732861509924b08064bd3884d12d7529e9 127.0.0.1:30004</span><br><span class="line">   slots:12288-16383 (4096 slots) master</span><br><span class="line">S: 7adb84ac950e3e434c4ca240c32b986199bfdc50 127.0.0.1:30005</span><br><span class="line">   replicates 684c87a4466ad65feb91964556d842c6f002faa3</span><br><span class="line">S: f557e2a9a58b5b56c697016042cdfaaa78c39af1 127.0.0.1:30006</span><br><span class="line">   replicates 3da9d9481730d373f08627cab3c273fe616e7a0a</span><br><span class="line">S: eab252c2e051ce599bb90bcabcc4c0cca883c6ec 127.0.0.1:30007</span><br><span class="line">   replicates ea8ce815984589a12c5d183de6efd005e080bad4</span><br><span class="line">S: 494dc2ace152be4e159d229b2cbe5daa1f03a7d4 127.0.0.1:30008</span><br><span class="line">   replicates 1dc55a732861509924b08064bd3884d12d7529e9</span><br><span class="line">Can I set the above configuration? (type &apos;yes&apos; to accept): yes</span><br><span class="line">&gt;&gt;&gt; Nodes configuration updated</span><br><span class="line">&gt;&gt;&gt; Assign a different config epoch to each node</span><br><span class="line">&gt;&gt;&gt; Sending CLUSTER MEET messages to join the cluster</span><br><span class="line">Waiting for the cluster to join..</span><br><span class="line">&gt;&gt;&gt; Performing Cluster Check (using node 127.0.0.1:30001)</span><br><span class="line">M: 684c87a4466ad65feb91964556d842c6f002faa3 127.0.0.1:30001</span><br><span class="line">   slots:0-4095 (4096 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: eab252c2e051ce599bb90bcabcc4c0cca883c6ec 127.0.0.1:30007</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates ea8ce815984589a12c5d183de6efd005e080bad4</span><br><span class="line">S: 7adb84ac950e3e434c4ca240c32b986199bfdc50 127.0.0.1:30005</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 684c87a4466ad65feb91964556d842c6f002faa3</span><br><span class="line">M: 1dc55a732861509924b08064bd3884d12d7529e9 127.0.0.1:30004</span><br><span class="line">   slots:12288-16383 (4096 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">M: ea8ce815984589a12c5d183de6efd005e080bad4 127.0.0.1:30003</span><br><span class="line">   slots:8192-12287 (4096 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">M: 3da9d9481730d373f08627cab3c273fe616e7a0a 127.0.0.1:30002</span><br><span class="line">   slots:4096-8191 (4096 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: f557e2a9a58b5b56c697016042cdfaaa78c39af1 127.0.0.1:30006</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 3da9d9481730d373f08627cab3c273fe616e7a0a</span><br><span class="line">S: 494dc2ace152be4e159d229b2cbe5daa1f03a7d4 127.0.0.1:30008</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 1dc55a732861509924b08064bd3884d12d7529e9</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line">&gt;&gt;&gt; Check for open slots...</span><br><span class="line">&gt;&gt;&gt; Check slots coverage...</span><br><span class="line">[OK] All 16384 slots covered.</span><br></pre></td></tr></table></figure>
+<p>集群（4主4从）效果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:30001&gt; cluster nodes</span><br><span class="line">3da9d9481730d373f08627cab3c273fe616e7a0a 127.0.0.1:30002 master - 0 1534843625613 2 connected 4096-8191</span><br><span class="line">494dc2ace152be4e159d229b2cbe5daa1f03a7d4 127.0.0.1:30008 master - 0 1534843625613 9 connected 12288-16383</span><br><span class="line">7adb84ac950e3e434c4ca240c32b986199bfdc50 127.0.0.1:30005 slave 684c87a4466ad65feb91964556d842c6f002faa3 0 1534843625613 5 connected</span><br><span class="line">eab252c2e051ce599bb90bcabcc4c0cca883c6ec 127.0.0.1:30007 slave ea8ce815984589a12c5d183de6efd005e080bad4 0 1534843625613 7 connected</span><br><span class="line">ea8ce815984589a12c5d183de6efd005e080bad4 127.0.0.1:30003 master - 0 1534843625310 3 connected 8192-12287</span><br><span class="line">1dc55a732861509924b08064bd3884d12d7529e9 127.0.0.1:30004 slave 494dc2ace152be4e159d229b2cbe5daa1f03a7d4 0 1534843625613 9 connected</span><br><span class="line">f557e2a9a58b5b56c697016042cdfaaa78c39af1 127.0.0.1:30006 slave 3da9d9481730d373f08627cab3c273fe616e7a0a 0 1534843625512 6 connected</span><br><span class="line">684c87a4466ad65feb91964556d842c6f002faa3 127.0.0.1:30001 myself,master - 0 0 1 connected 0-4095</span><br></pre></td></tr></table></figure></p>
+<h3 id="PHP连接集群"><a href="#PHP连接集群" class="headerlink" title="PHP连接集群"></a>PHP连接集群</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$redis = <span class="keyword">new</span> \RedisCluster(<span class="keyword">NULL</span>, [<span class="string">'127.0.0.1:30001'</span>]);</span><br><span class="line"><span class="comment">// 管道技术</span></span><br><span class="line">$pipe = $redis-&gt;multi(\Redis::PIPELINE);</span><br><span class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; <span class="number">3</span>; $i++) &#123;</span><br><span class="line">    $key = <span class="string">"key::&#123;$i&#125;"</span>;</span><br><span class="line">    dump($pipe-&gt;set($key, str_pad($i, <span class="number">2</span>, <span class="string">'0'</span>, <span class="number">0</span>)));</span><br><span class="line">    <span class="keyword">echo</span> PHP_EOL;</span><br><span class="line">    dump($pipe-&gt;get($key));</span><br><span class="line">    <span class="keyword">echo</span> PHP_EOL;</span><br><span class="line">&#125;</span><br><span class="line">$result = $pipe-&gt;exec();</span><br><span class="line">dump($result);</span><br></pre></td></tr></table></figure>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/centos/centos7时间设置.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/hexo/Qiniu.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

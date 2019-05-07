@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>VirtrualBox 配置网络 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="VirtrualBox安装虚拟机并配置网络，主要是静态IP，整个局域网均可访问！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VirtrualBox 配置网络">
+<meta property="og:url" content="https://klauspeng.github.io/centos/virtrualBox-network.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="VirtrualBox安装虚拟机并配置网络，主要是静态IP，整个局域网均可访问！">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/1.png">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/2.png">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/3.png">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/4.png">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/5.png">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/6.png">
+<meta property="og:image" content="https://klauspeng.github.io/images/virtrualbox/7.png">
+<meta property="og:updated_time" content="2019-01-04T03:15:52.860Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VirtrualBox 配置网络">
+<meta name="twitter:description" content="VirtrualBox安装虚拟机并配置网络，主要是静态IP，整个局域网均可访问！">
+<meta name="twitter:image" content="https://klauspeng.github.io/images/virtrualbox/1.png">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtrualBox安装Centos6-8-minimal"><span class="toc-text">VirtrualBox安装Centos6.8 minimal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置局域网IP"><span class="toc-text">配置局域网IP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改ip地址"><span class="toc-text">修改ip地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改网关"><span class="toc-text">修改网关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改DNS"><span class="toc-text">修改DNS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试网络"><span class="toc-text">测试网络</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-centos/virtrualBox-network" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">VirtrualBox 配置网络</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.09.18</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/centos/">centos</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>VirtrualBox安装虚拟机并配置网络，主要是静态IP，整个局域网均可访问！<br><a id="more"></a></p>
+<h2 id="VirtrualBox安装Centos6-8-minimal"><a href="#VirtrualBox安装Centos6-8-minimal" class="headerlink" title="VirtrualBox安装Centos6.8 minimal"></a>VirtrualBox安装Centos6.8 minimal</h2><p>VirtrualBox新建个虚拟机配置好内存以及硬盘大小，安装即可；</p>
+<p>网络方式是 NAT(默认)和桥接方式来实现，最好在安装前设置好，NAT主要是连外网，桥接可通过局域网IP访问；<br><img src="/images/virtrualbox/1.png" alt=""><br><img src="/images/virtrualbox/2.png" alt=""><br>设置-网络-网卡1（NAT）默认已经设置好了，再点开 网卡2，连接方式选择 桥接网卡；</p>
+<h2 id="配置局域网IP"><a href="#配置局域网IP" class="headerlink" title="配置局域网IP"></a>配置局域网IP</h2><h3 id="修改ip地址"><a href="#修改ip地址" class="headerlink" title="修改ip地址"></a>修改ip地址</h3><p>进入文件夹 <code>cd /etc/sysconfig/newwork-scripts/</code> 可以看到两个eth0(NAT) eth1(桥接)<br><img src="/images/virtrualbox/3.png" alt=""><br>把eth0的ONBOOT设置成yes，就是开机启动的意思<br><img src="/images/virtrualbox/4.png" alt=""><br>桥接设置如下：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DEVICE="eth1"</span><br><span class="line">BOOTPROTO="static"   #这里改为使用静态ip</span><br><span class="line">ONBOOT="yes"   #设置为自动启动</span><br><span class="line">IPADDR=192.168.231.200     #设置该虚拟机的ip地址，要与宿主机在一个网段，但是不能重名</span><br><span class="line">NETMASK=255.255.255.0      #设置子网掩码</span><br><span class="line">GATEWAY=192.168.231.1   #设置网关</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/virtrualbox/5.png" alt=""></p>
+<h3 id="修改网关"><a href="#修改网关" class="headerlink" title="修改网关"></a>修改网关</h3><p>使用命令：<code>vi /etc/sysconfig/network</code> 修改该文件内容如下：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NETWORKING=yes</span><br><span class="line">HOSTNAME=localhost.localdomain</span><br><span class="line">GATEWAY=192.168.231.1   # 这里设置网关，也就是那个虚拟网卡的ip</span><br></pre></td></tr></table></figure></p>
+<h3 id="修改DNS"><a href="#修改DNS" class="headerlink" title="修改DNS"></a>修改DNS</h3><p>使用命令：<code>vi /ect/resolv.conf</code>  修改该文件内容如下：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nameserver 192.168.231.1 # 增加一个域名服务器</span><br></pre></td></tr></table></figure></p>
+<h3 id="测试网络"><a href="#测试网络" class="headerlink" title="测试网络"></a>测试网络</h3><p>重启下网络服务 <code>service network restart</code></p>
+<p>测试能否访问外网：<br><img src="/images/virtrualbox/6.png" alt=""><br>能否ping通192.168.231.200<br><img src="/images/virtrualbox/7.png" alt=""></p>
+<p>OK,网络设置好了！</p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/php/FPDF-Not_a_JPEG_file.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/redis/php_redis.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

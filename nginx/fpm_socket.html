@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>php-fpm 和 nginx 的两种通信方式 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="tcp socket or unix socket?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php-fpm 和 nginx 的两种通信方式">
+<meta property="og:url" content="https://klauspeng.github.io/nginx/fpm_socket.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="tcp socket or unix socket?">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.282Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php-fpm 和 nginx 的两种通信方式">
+<meta name="twitter:description" content="tcp socket or unix socket?">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tcp-socket"><span class="toc-text">tcp socket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#unix-socket"><span class="toc-text">unix socket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何选择？"><span class="toc-text">如何选择？</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-nginx/fpm_socket" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">php-fpm 和 nginx 的两种通信方式</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.10.12</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>tcp socket or unix socket?</p>
+<a id="more"></a>
+<h2 id="tcp-socket"><a href="#tcp-socket" class="headerlink" title="tcp socket"></a>tcp socket</h2><p>允许通过网络进程之间的通信，也可以通过loopback进行本地进程之间通信。</p>
+<h2 id="unix-socket"><a href="#unix-socket" class="headerlink" title="unix socket"></a>unix socket</h2><p>允许在本地运行的进程之间进行通信。</p>
+<ol>
+<li>需在同一台服务器</li>
+<li>将sock文件放在/dev/shm目录下，使用的内存读写更快。<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> cd /dev/shm</span><br><span class="line">touch php7.0-fpm.sock </span><br><span class="line">chown www-data:www-data php7.0-fpm.sock</span><br><span class="line">chmod 777 php7.0-fpm.sock</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> vi /etc/php/7.0/fpm/pool.d/www.conf</span><br><span class="line">listen= /dev/shm/php7.0-fpm.sock</span><br><span class="line">listen.owner = www-data</span><br><span class="line">listen.group = www-data</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> nginx配置</span><br><span class="line">location ~* \.php$ &#123;</span><br><span class="line">    fastcgi_pass unix:/dev/shm/php7.0-fpm.sock;</span><br><span class="line">    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">    include /etc/nginx/fastcgi_params;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="如何选择？"><a href="#如何选择？" class="headerlink" title="如何选择？"></a>如何选择？</h2><p>如果是在同一台服务器上运行的nginx和php-fpm，并发量不超过1000，选择unix socket，因为是本地，可以避免一些检查操作(路由等)，因此更快，更轻。 </p>
+<p>如果我面临高并发业务，我会选择使用更可靠的tcp socket，以负载均衡、内核优化等运维手段维持效率。</p>
+<p>参考链接：</p>
+<ol>
+<li><a href="https://blog.csdn.net/qq624202120/article/details/60957634" target="_blank" rel="noopener">nginx和php-fpm 是使用 tcp socket 还是 unix socket ？</a></li>
+<li><a href="https://segmentfault.com/q/1010000009961896" target="_blank" rel="noopener">nginx和php-fpm的通信方式有两种，一种是TCP的方式，一种是unix socket方式，哪种好一点？</a></li>
+<li><a href="https://segmentfault.com/q/1010000002412399" target="_blank" rel="noopener">nginx 与 php-fpm socket 所有者权限问题</a></li>
+<li><a href="https://www.cnxct.com/default-configuration-and-performance-of-nginx-phpfpm-and-tcp-socket-or-unix-domain-socket/" target="_blank" rel="noopener">nginx、php-fpm默认配置与性能–TCP socket还是unix domain socket</a></li>
+</ol>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/mysql/partintion.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

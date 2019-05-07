@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>mysql表分区 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="对mysql表分区的认识与理解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql表分区">
+<meta property="og:url" content="https://klauspeng.github.io/mysql/partintion.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="对mysql表分区的认识与理解。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.281Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql表分区">
+<meta name="twitter:description" content="对mysql表分区的认识与理解。">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意点"><span class="toc-text">注意点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用场景"><span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分区类型"><span class="toc-text">分区类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Range分区"><span class="toc-text">Range分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LIST分区"><span class="toc-text">LIST分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hash分区"><span class="toc-text">Hash分区</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#常规Hash分区"><span class="toc-text">常规Hash分区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#线性Hash分区"><span class="toc-text">线性Hash分区</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KEY分区"><span class="toc-text">KEY分区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他概念"><span class="toc-text">其他概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#子分区"><span class="toc-text">子分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分区对于NULL值的处理"><span class="toc-text">分区对于NULL值的处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分区管理"><span class="toc-text">分区管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-text">参考文章</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-mysql/partintion" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">mysql表分区</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.10.11</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/mysql/">mysql</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>对mysql表分区的认识与理解。<br><a id="more"></a></p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><blockquote>
+<p>表分区，是指根据一定规则，将数据库中的一张表分解成多个更小的，容易管理的部分。从逻辑上看，<strong>只有一张表</strong>，但是底层却是由<strong>多个物理分区</strong>组成。</p>
+</blockquote>
+<h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><ol>
+<li>所有的底层表都必须使用相同的存储引擎</li>
+<li>一个表最多只能有1024个分区</li>
+<li>如果分区字段中有主键或者唯一索引的列，那么多有主键列和唯一索引列都必须包含进来</li>
+<li>分区表中无法使用外键约束</li>
+<li>MySQL的分区适用于一个表的所有数据和索引</li>
+</ol>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>A. 表非常大以至于无法全部都放在内存中，或者只在表的最后部分有热点数据，其他都是历史数据<br>B. 分区表的数据更容易维护，如：想批量删除大量数据可以使用清除整个分区的方式。另外，还可以对一个独立分区进行优化、检查、修复等操作<br>C. 分区表的数据可以分布在不同的物理设备上，从而高效地利用多个硬件设备<br>D. 可以使用分区表来避免某些特殊的瓶颈，如：innodb的单个索引的互斥访问，ext3文件系统的inode锁竞争等<br>E. 如果需要，还可以备份和恢复独立的分区，这在非常大的数据集的场景下效果非常好<br>F. 优化查询，在where字句中包含分区列时，可以只使用必要的分区来提高查询效率，同时在涉及sum()和count()这类聚合函数的查询时，可以在每个分区上面并行处理，最终只需要汇总所有分区得到的结果。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><blockquote>
+<p>分区表是由多个相关的底层表实现，这些底层表也是由句柄对象表示，所以我们也可以直接访问各个分区，存储引擎管理分区的各个底层表和管理普通表一样（所有的底层表都必须使用相同的存储引擎），分区表的索引只是在各个底层表上各自加上一个相同的索引，从存储引擎的角度来看，底层表和一个普通表没有任何不同，存储引擎也无须知道这是一个普通表还是一个分区表的一部分。</p>
+</blockquote>
+<p>在分区表上的操作按照下面的操作逻辑进行：</p>
+<p>select查询：</p>
+<p>当查询一个分区表的时候，分区层先打开并锁住所有的底层表，优化器判断是否可以过滤部分分区，然后再调用对应的存储引擎接口访问各个分区的数据</p>
+<p>insert操作：</p>
+<p>当写入一条记录时，分区层打开并锁住所有的底层表，然后确定哪个分区接受这条记录，再将记录写入对应的底层表</p>
+<p>delete操作：</p>
+<p>当删除一条记录时，分区层先打开并锁住所有的底层表，然后确定数据对应的分区，最后对相应底层表进行删除操作</p>
+<p>update操作：</p>
+<p>当更新一条数据时，分区层先打开并锁住所有的底层表，mysql先确定需要更新的记录在哪个分区，然后取出数据并更新，再判断更新后的数据应该放在哪个分区，然后对底层表进行写入操作，并对原数据所在的底层表进行删除操作</p>
+<p><strong>虽然每个操作都会打开并锁住所有的底层表，但这并不是说分区表在处理过程中是锁住全表的，如果存储引擎能够自己实现行级锁，如：innodb，则会在分区层释放对应的表锁，这个加锁和解锁过程与普通Innodb上的查询类似。</strong></p>
+<h2 id="分区类型"><a href="#分区类型" class="headerlink" title="分区类型"></a>分区类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Range分区</td>
+<td>利用取值范围进行分区，区间要连续并且不能互相重叠。</td>
+</tr>
+<tr>
+<td>LIST分区</td>
+<td>建立离散的值列表告诉数据库特定的值属于哪个分区</td>
+</tr>
+<tr>
+<td>Columns分区</td>
+<td>MySQL5.5中引入的分区类型，解决了5.5版本之前range分区和list分区只支持整数分区的问题。 Columns分区可以细分为 range columns分区和 list columns分区，他们都支持整数，日期时间，字符串三大数据类型。(不支持text和blob类型作为分区键) columns分区还支持多列分区(这里不详细展开)。</td>
+</tr>
+<tr>
+<td>Hash分区</td>
+<td>主要用来分散热点读，确保数据在预先确定个数的分区中尽可能平均分布</td>
+</tr>
+<tr>
+<td>Key分区</td>
+<td>类似Hash分区，Hash分区允许使用用户自定义的表达式，但Key分区不允许使用用户自定义的表达式。Hash仅支持整数分区，而Key分区支持除了Blob和text的其他类型的列作为分区键。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Range分区"><a href="#Range分区" class="headerlink" title="Range分区"></a>Range分区</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> emp(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">null</span>,</span><br><span class="line">	store_id <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">) <span class="keyword">partition</span> <span class="keyword">by</span> <span class="keyword">range</span>(store_id)(</span><br><span class="line">	<span class="keyword">partition</span> p0 <span class="keyword">values</span> <span class="keyword">less</span> <span class="keyword">than</span>(<span class="number">10</span>),</span><br><span class="line">	<span class="keyword">partition</span> p1 <span class="keyword">values</span> <span class="keyword">less</span> <span class="keyword">than</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>可用<code>explain</code>查看分区，比如<code>explain partitions select * from emp where store_id=10</code>可看到<code>prtitions</code>是<code>p1</code>。</p>
+<p><strong>每个分区都是按顺序定义的，从最低到最高。</strong></p>
+<p><strong>当插入的记录中对应的分区键的值不在分区定义的范围中的时候，插入语句会失败</strong></p>
+<h3 id="LIST分区"><a href="#LIST分区" class="headerlink" title="LIST分区"></a>LIST分区</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> emp1(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">null</span>,</span><br><span class="line">	store_id <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">) <span class="keyword">partition</span> <span class="keyword">by</span> <span class="keyword">list</span>(store_id)(</span><br><span class="line">	<span class="keyword">partition</span> p0 <span class="keyword">values</span> <span class="keyword">in</span> (<span class="number">3</span>,<span class="number">5</span>),</span><br><span class="line">	<span class="keyword">partition</span> p1 <span class="keyword">values</span> <span class="keyword">in</span> (<span class="number">2</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">9</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><strong>如果插入的记录对应的分区键的值不在list分区指定的值中，将会插入失败！</strong></p>
+<h3 id="Hash分区"><a href="#Hash分区" class="headerlink" title="Hash分区"></a>Hash分区</h3><h4 id="常规Hash分区"><a href="#常规Hash分区" class="headerlink" title="常规Hash分区"></a>常规Hash分区</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> emp1(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">null</span>,</span><br><span class="line">	store_id <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">) <span class="keyword">partition</span> <span class="keyword">by</span> <span class="keyword">hash</span>(store_id) <span class="keyword">partitions</span> <span class="number">4</span>; <span class="comment"># 根据store_id对4取模，决定记录存储位置</span></span><br></pre></td></tr></table></figure>
+<p>优点：能够使数据尽可能的均匀分布。</p>
+<p>缺点：不适合分区经常变动的需求。比如：增加两个分区，需要所有重新计算。</p>
+<h4 id="线性Hash分区"><a href="#线性Hash分区" class="headerlink" title="线性Hash分区"></a>线性Hash分区</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> emp1(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">null</span>,</span><br><span class="line">	store_id <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">) <span class="keyword">partition</span> <span class="keyword">by</span> LINER <span class="keyword">hash</span>(store_id) <span class="keyword">partitions</span> <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+<p>算法：</p>
+<p>假设要保存记录的分区编号为N,num为一个非负整数,表示分割成的分区的数量，那么N可以通过以下步骤得到：</p>
+<p>Step 1. 找到一个大于等于num的2的幂，这个值为V，V可以通过下面公式得到：</p>
+<p>V = Power(2,Ceiling(Log(2,num)))</p>
+<p>例如：刚才设置了4个分区，num=4，Log(2,4)=2,Ceiling(2)=2,power(2,2)=4,即V=4</p>
+<p>Step 2. 设置N=F(column_list)&amp;(V-1)</p>
+<p>例如：刚才V=4，store_id=234对应的N值，N = 234&amp;(4-1) =2</p>
+<p>Step 3. 当N&gt;=num,设置V=Ceiling(V/2),N=N&amp;(V-1)</p>
+<p>例如：store_id=234,N=2&lt;4,所以N就取值2，即可。</p>
+<p>假设上面算出来的N=5，那么V=Ceiling(2.5)=3,N=234&amp;(3-1)=1,即在第一个分区。</p>
+<p><strong>优点：在分区维护(增加，删除，合并，拆分分区)时，MySQL能够处理得更加迅速。</strong></p>
+<p><strong>缺点：与常规Hash分区相比，线性Hash各个分区之间的数据分布不太均衡。</strong></p>
+<h3 id="KEY分区"><a href="#KEY分区" class="headerlink" title="KEY分区"></a>KEY分区</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> emp1(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">null</span>,</span><br><span class="line">	store_id <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">) <span class="keyword">partition</span> <span class="keyword">by</span> <span class="keyword">key</span>(store_id) <span class="keyword">partitions</span> <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+<p>和HASH分区相似,但是KEY分区支持除text和BLOB之外的所有数据类型的分区，而HASH分区只支持数字分区，KEY分区不允许使用用户自定义的表达式进行分区，KEY分区使用系统提供的HASH函数进行分区。当表中存在主键或者唯一键时，如果创建key分区时没有指定字段系统默认会首选主键列作为分区字列,如果不存在主键列会选择非空唯一键列作为分区列,注意唯一列作为分区列唯一列不能为null。</p>
+<h2 id="其他概念"><a href="#其他概念" class="headerlink" title="其他概念"></a>其他概念</h2><h3 id="子分区"><a href="#子分区" class="headerlink" title="子分区"></a>子分区</h3><p>分区表中对每个分区再次分割，又成为复合分区。</p>
+<h3 id="分区对于NULL值的处理"><a href="#分区对于NULL值的处理" class="headerlink" title="分区对于NULL值的处理"></a>分区对于NULL值的处理</h3><p>MySQ允许分区键值为NULL，分区键可能是一个字段或者一个用户定义的表达式。一般情况下，MySQL在分区的时候会把NULL值当作零值或者一个最小值进行处理。</p>
+<p>注意</p>
+<p>Range分区中：NULL值被当作最小值来处理</p>
+<p>List分区中：NULL值必须出现在列表中，否则不被接受</p>
+<p>Hash/Key分区中：NULL值会被当作零值来处理</p>
+<h3 id="分区管理"><a href="#分区管理" class="headerlink" title="分区管理"></a>分区管理</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加分区</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> emp <span class="keyword">add</span> <span class="keyword">partition</span> (<span class="keyword">partition</span> p2 <span class="keyword">values</span> <span class="keyword">less</span> <span class="keyword">than</span>(<span class="number">30</span>));</span><br><span class="line"><span class="comment"># 删除分区</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> emp <span class="keyword">drop</span> <span class="keyword">partition</span> p2;</span><br><span class="line"><span class="comment"># 对于Hash和Key分区</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> emp2 <span class="keyword">coalesce</span> <span class="keyword">partition</span> <span class="number">2</span>; //将分区缩减到2个</span><br><span class="line"><span class="comment"># 查询某张表一共有多少个分区</span></span><br><span class="line"><span class="keyword">select</span> partition_name,partition_expression,partition_description,table_rows</span><br><span class="line"><span class="keyword">from</span> INFORMATION_SCHEMA.partitions</span><br><span class="line"><span class="keyword">where</span> table_schema=<span class="string">'test'</span> <span class="keyword">and</span> table_name = <span class="string">'emp'</span>;</span><br><span class="line"><span class="comment"># 查看执行计划，判断查询数据是否进行了分区过滤</span></span><br><span class="line"><span class="keyword">explain</span> <span class="keyword">partitions</span> <span class="keyword">select</span> * <span class="keyword">from</span> emp1 <span class="keyword">where</span> store_id=<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="https://www.cnblogs.com/fengwenzhee/p/7001207.html" target="_blank" rel="noopener">百万级数据mysql分区</a></li>
+<li><a href="https://www.cnblogs.com/duanxz/p/6518846.html" target="_blank" rel="noopener">mysql分区表之一：分区原理和优缺点【转】</a></li>
+</ol>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/php/fpm_count.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/nginx/fpm_socket.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

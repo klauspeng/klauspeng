@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>PHP日志 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="分析PHP日志函数及常用框架的日志封装。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP日志">
+<meta property="og:url" content="https://klauspeng.github.io/php/php-log.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="分析PHP日志函数及常用框架的日志封装。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.290Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHP日志">
+<meta name="twitter:description" content="分析PHP日志函数及常用框架的日志封装。">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP自带"><span class="toc-text">PHP自带</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#error-log"><span class="toc-text">error_log</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#file-put-contents"><span class="toc-text">file_put_contents</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Monolog"><span class="toc-text">Monolog</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#thinkphp5-0-9的Log"><span class="toc-text">thinkphp5.0.9的Log</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YII2-0-11的Log"><span class="toc-text">YII2.0.11的Log</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#laravel5-4"><span class="toc-text">laravel5.4</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-php/php-log" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">PHP日志</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.06.01</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>分析PHP日志函数及常用框架的日志封装。<br><a id="more"></a></p>
+<h2 id="PHP自带"><a href="#PHP自带" class="headerlink" title="PHP自带"></a>PHP自带</h2><h3 id="error-log"><a href="#error-log" class="headerlink" title="error_log"></a>error_log</h3><blockquote>
+<p>bool error_log ( string $message [, int $message_type = 0 [, string $destination [, string $extra_headers ]]] )</p>
+</blockquote>
+<p>把错误信息发送到 web 服务器的错误日志，或者到一个文件里。 </p>
+<p>message_type:<br>0.PHP日志<br>1.发送到destination设置的邮件地址<br>3.被发送到位置为destination的文件里<br>4.直接发送到SAPI的日志处理程序中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果无法连接到数据库，发送通知到服务器日志</span></span><br><span class="line"><span class="keyword">if</span> (!Ora_Logon($username, $password)) &#123;</span><br><span class="line">    error_log(<span class="string">"Oracle database not available!"</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 如果用尽了 FOO，通过邮件通知管理员</span></span><br><span class="line"><span class="keyword">if</span> (!($foo = allocate_new_foo())) &#123;</span><br><span class="line">    error_log(<span class="string">"Big trouble, we're all out of FOOs!"</span>, <span class="number">1</span>,</span><br><span class="line">               <span class="string">"operator@example.com"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 调用 error_log() 的另一种方式:</span></span><br><span class="line">error_log(<span class="string">"You messed up!"</span>, <span class="number">3</span>, <span class="string">"/var/tmp/my-errors.log"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="file-put-contents"><a href="#file-put-contents" class="headerlink" title="file_put_contents"></a>file_put_contents</h3><p>刚好看到这个函数,这个函数也能写入文件啊,而且没必要YII那么复杂吧</p>
+<p>比如：<code>file_put_contents($file, $content.PHP_EOL, FILE_APPEND | LOCK_EX);</code>  </p>
+<p>还实现了文件锁，哈哈，正好在研究文件锁。<br>自己写了个,不断优化吧……<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logWrite</span><span class="params">($conteent, $level = <span class="string">'DEBUG'</span>,$file = <span class="string">'temp.txt'</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $time = date(<span class="string">'Y-m-d H:i:s'</span>,time());</span><br><span class="line">    $level = sprintf(<span class="string">'%6s'</span>, $level);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">empty</span>($conteent))</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (is_array($conteent))</span><br><span class="line">        $conteent = json_encode($conteent,JSON_UNESCAPED_UNICODE);</span><br><span class="line"></span><br><span class="line">    file_put_contents($file, $time.$level.<span class="string">' '</span>.$conteent.PHP_EOL, FILE_APPEND | LOCK_EX);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">2017-06-01 09:43:49 DEBUG &#123;&quot;test&quot;:&quot;我我我&quot;,&quot;test1&quot;:&quot;我我我&quot;,&quot;test2&quot;:&quot;我我我&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:43:49  INFO &#123;&quot;test&quot;:&quot;我我我&quot;,&quot;test1&quot;:&quot;我我我&quot;,&quot;test2&quot;:&quot;我我我&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:43:49  WARN &#123;&quot;test&quot;:&quot;我我我&quot;,&quot;test1&quot;:&quot;我我我&quot;,&quot;test2&quot;:&quot;我我我&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:43:49 ERROR &#123;&quot;test&quot;:&quot;我我我&quot;,&quot;test1&quot;:&quot;我我我&quot;,&quot;test2&quot;:&quot;我我我&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:44:15 DEBUG &#123;&quot;test&quot;:&quot;阿斯达萨达撒大所多撒多撒多撒大所多&quot;,&quot;test1&quot;:&quot;娃娃二群无多无群&quot;,&quot;test2&quot;:&quot;ADASD&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:44:15  INFO &#123;&quot;test&quot;:&quot;阿斯达萨达撒大所多撒多撒多撒大所多&quot;,&quot;test1&quot;:&quot;娃娃二群无多无群&quot;,&quot;test2&quot;:&quot;ADASD&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:44:15  WARN &#123;&quot;test&quot;:&quot;阿斯达萨达撒大所多撒多撒多撒大所多&quot;,&quot;test1&quot;:&quot;娃娃二群无多无群&quot;,&quot;test2&quot;:&quot;ADASD&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:44:15 ERROR &#123;&quot;test&quot;:&quot;阿斯达萨达撒大所多撒多撒多撒大所多&quot;,&quot;test1&quot;:&quot;娃娃二群无多无群&quot;,&quot;test2&quot;:&quot;ADASD&quot;,&quot;test3&quot;:&quot;阿斯达奥撒多撒多撒多撒大所多所大所大大所多撒大&quot;&#125;</span><br><span class="line">2017-06-01 09:47:42 DEBUG 阿斯达萨达撒大所多撒多撒多撒大所多</span><br><span class="line">2017-06-01 09:47:42  INFO 阿斯达萨达撒大所多撒多撒多撒大所多</span><br><span class="line">2017-06-01 09:47:42  WARN 阿斯达萨达撒大所多撒多撒多撒大所多</span><br><span class="line">2017-06-01 09:47:42 ERROR 阿斯达萨达撒大所多撒多撒多撒大所多</span><br></pre></td></tr></table></figure></p>
+<h2 id="Monolog"><a href="#Monolog" class="headerlink" title="Monolog"></a>Monolog</h2><p><a href="https://github.com/Seldaek/monolog" target="_blank" rel="noopener">Github传送门</a></p>
+<p>Monolog works with PHP 7.0 or above, use Monolog ^1.0 for PHP 5.3+ support.</p>
+<ol>
+<li>8个级别：debug, info, notice, warning, error, critical, alert, emergency</li>
+<li>支持firePHP,chromePHP调试,浏览器输出</li>
+<li>支持redis,socket,数据库,文件流等写入</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">Monolog</span>\<span class="title">Logger</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Monolog</span>\<span class="title">Handler</span>\<span class="title">StreamHandler</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Monolog</span>\<span class="title">Handler</span>\<span class="title">ChromePHPHandler</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Monolog</span>\<span class="title">Formatter</span>\<span class="title">LineFormatter</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Create some handlers</span></span><br><span class="line">$stream = <span class="keyword">new</span> StreamHandler(<span class="keyword">__DIR__</span>.<span class="string">'/my_app.log'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置格式</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"</span></span><br><span class="line">$output = <span class="string">"[%datetime%] &gt; %level_name% &gt; %message% %context% %extra%\n"</span>;</span><br><span class="line"><span class="comment">// finally, create a formatter</span></span><br><span class="line">$formatter = <span class="keyword">new</span> LineFormatter($output);</span><br><span class="line">$stream-&gt;setFormatter($formatter);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Create the main logger of the app</span></span><br><span class="line">$logger = <span class="keyword">new</span> Logger(<span class="string">'my_logger'</span>);</span><br><span class="line">$logger-&gt;pushHandler($stream);</span><br><span class="line">$logger-&gt;pushHandler(<span class="keyword">new</span> ChromePHPHandler());</span><br><span class="line"></span><br><span class="line">$logger-&gt;error(<span class="string">'12121'</span>);</span><br><span class="line">$logger-&gt;warn(<span class="string">'这是警告信息！'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Or clone the first one to only change the channel</span></span><br><span class="line">$securityLogger = $logger-&gt;withName(<span class="string">'security'</span>);</span><br><span class="line"></span><br><span class="line">$securityLogger-&gt;error(<span class="string">'12121'</span>);</span><br><span class="line">$securityLogger-&gt;warn(<span class="string">'这是警告信息！'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="thinkphp5-0-9的Log"><a href="#thinkphp5-0-9的Log" class="headerlink" title="thinkphp5.0.9的Log"></a>thinkphp5.0.9的Log</h2><p>File驱动也是用的error_log函数<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">write</span><span class="params">($message, $destination, $apart = false)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//检测日志文件大小，超过配置大小则备份日志文件重新生成</span></span><br><span class="line">    <span class="keyword">if</span> (is_file($destination) &amp;&amp; floor(<span class="keyword">$this</span>-&gt;config[<span class="string">'file_size'</span>]) &lt;= filesize($destination)) &#123;</span><br><span class="line">        rename($destination, dirname($destination) . DS . time() . <span class="string">'-'</span> . basename($destination));</span><br><span class="line">        <span class="keyword">$this</span>-&gt;writed[$destination] = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">return</span> error_log($message, <span class="number">3</span>, $destination);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="YII2-0-11的Log"><a href="#YII2-0-11的Log" class="headerlink" title="YII2.0.11的Log"></a>YII2.0.11的Log</h2><p>File驱动：用的是fwrite和file_put_contents<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Writes log messages to a file.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InvalidConfigException if unable to open the log file for writing</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">export</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $text = implode(<span class="string">"\n"</span>, array_map([<span class="keyword">$this</span>, <span class="string">'formatMessage'</span>], <span class="keyword">$this</span>-&gt;messages)) . <span class="string">"\n"</span>;</span><br><span class="line">    <span class="keyword">if</span> (($fp = @fopen(<span class="keyword">$this</span>-&gt;logFile, <span class="string">'a'</span>)) === <span class="keyword">false</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidConfigException(<span class="string">"Unable to append to log file: &#123;$this-&gt;logFile&#125;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    @flock($fp, LOCK_EX);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;enableRotation) &#123;</span><br><span class="line">        <span class="comment">// clear stat cache to ensure getting the real current file size and not a cached one</span></span><br><span class="line">        <span class="comment">// this may result in rotating twice when cached file size is used on subsequent calls</span></span><br><span class="line">        clearstatcache();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;enableRotation &amp;&amp; @filesize(<span class="keyword">$this</span>-&gt;logFile) &gt; <span class="keyword">$this</span>-&gt;maxFileSize * <span class="number">1024</span>) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rotateFiles();</span><br><span class="line">        @flock($fp, LOCK_UN);</span><br><span class="line">        @fclose($fp);</span><br><span class="line">        @file_put_contents(<span class="keyword">$this</span>-&gt;logFile, $text, FILE_APPEND | LOCK_EX);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        @fwrite($fp, $text);</span><br><span class="line">        @flock($fp, LOCK_UN);</span><br><span class="line">        @fclose($fp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;fileMode !== <span class="keyword">null</span>) &#123;</span><br><span class="line">        @chmod(<span class="keyword">$this</span>-&gt;logFile, <span class="keyword">$this</span>-&gt;fileMode);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="laravel5-4"><a href="#laravel5-4" class="headerlink" title="laravel5.4"></a>laravel5.4</h2><p>用的是Monolog</p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/php/composer.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/php/phpstorm.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

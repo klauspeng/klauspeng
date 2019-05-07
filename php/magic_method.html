@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>php魔术方法及魔法常量 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="php魔术方法及魔法常量的理解及使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php魔术方法及魔法常量">
+<meta property="og:url" content="https://klauspeng.github.io/php/magic_method.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="php魔术方法及魔法常量的理解及使用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-08T09:18:02.289Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php魔术方法及魔法常量">
+<meta name="twitter:description" content="php魔术方法及魔法常量的理解及使用">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#get-set-isset-unset"><span class="toc-text">__get __set __isset __unset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#construct-destruct"><span class="toc-text">__construct __destruct</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#call-callStatic"><span class="toc-text">__call __callStatic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#toString-clone-debugInfo"><span class="toc-text">__toString __clone __debugInfo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autoload"><span class="toc-text">__autoload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sleep-wakeup"><span class="toc-text">__sleep  __wakeup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#魔术常量"><span class="toc-text">魔术常量</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-php/magic_method" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">php魔术方法及魔法常量</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.10.09</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>php魔术方法及魔法常量的理解及使用<br><a id="more"></a></p>
+<h2 id="get-set-isset-unset"><a href="#get-set-isset-unset" class="headerlink" title="__get __set __isset __unset"></a><code>__get</code> <code>__set</code> <code>__isset</code> <code>__unset</code></h2><ol>
+<li>从一个难以访问的属性读取数据的时候 __get() 方法被调用</li>
+<li>向一个难以访问的属性赋值的时候 __set() 方法被调用</li>
+<li>难以访问包括：（1）私有属性，（2）没有初始化的属性</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> $config = <span class="keyword">array</span>(</span><br><span class="line">    <span class="string">'maxSize'</span>    =&gt; <span class="number">-1</span>,    <span class="comment">// 上传文件的最大值</span></span><br><span class="line">    <span class="string">'allowExts'</span>  =&gt; <span class="keyword">array</span>(),    <span class="comment">// 允许上传的文件后缀 留空不作后缀检查</span></span><br><span class="line">    <span class="string">'allowTypes'</span> =&gt; <span class="keyword">array</span>(),    <span class="comment">// 允许上传的文件类型 留空不做检查</span></span><br><span class="line">    <span class="string">'savePath'</span>   =&gt; <span class="string">''</span>,<span class="comment">// 上传文件保存路径</span></span><br><span class="line">    <span class="string">'saveRule'</span>   =&gt; <span class="string">'uniqid'</span>,<span class="comment">// 上传文件命名规则</span></span><br><span class="line">    <span class="string">'hashType'</span>   =&gt; <span class="string">'md5_file'</span>,<span class="comment">// 上传文件Hash规则函数名</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;config[$name])) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;config[$name];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__set</span><span class="params">($name, $value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;config[$name])) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;config[$name] = $value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__isset</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;config[$name]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="construct-destruct"><a href="#construct-destruct" class="headerlink" title="__construct __destruct"></a><code>__construct</code> <code>__destruct</code></h2><p><code>__construct</code> 类的构造函数–初始化</p>
+<p><code>__destruct()</code>，类的析构函数–销毁一个类之前执行</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;   </span><br><span class="line">                            </span><br><span class="line">  <span class="keyword">public</span> $name;     </span><br><span class="line">  <span class="keyword">public</span> $age;     </span><br><span class="line">  <span class="keyword">public</span> $sex;     </span><br><span class="line">                                  </span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($name=<span class="string">""</span>, $sex=<span class="string">"男"</span>, $age=<span class="number">22</span>)</span></span></span><br><span class="line"><span class="function">  </span>&#123;  </span><br><span class="line">    <span class="keyword">$this</span>-&gt;name = $name;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;sex = $sex;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;age = $age;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * say 说话方法</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123; </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"我叫："</span>.<span class="keyword">$this</span>-&gt;name.<span class="string">"，性别："</span>.<span class="keyword">$this</span>-&gt;sex.<span class="string">"，年龄："</span>.<span class="keyword">$this</span>-&gt;age;</span><br><span class="line">  &#125;  </span><br><span class="line">  </span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 声明一个析构方法</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">"我觉得我还可以再抢救一下，我的名字叫"</span>.<span class="keyword">$this</span>-&gt;name;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$Person = <span class="keyword">new</span> Person(<span class="string">"小明"</span>);</span><br><span class="line"><span class="keyword">unset</span>($Person); <span class="comment">//销毁上面创建的对象$Person</span></span><br></pre></td></tr></table></figure>
+<h2 id="call-callStatic"><a href="#call-callStatic" class="headerlink" title="__call __callStatic"></a><code>__call</code> <code>__callStatic</code></h2><p>在对象中调用一个不可访问方法时，<code>__call()</code> 会被调用。</p>
+<p>在静态上下文中调用一个不可访问方法时，<code>__callStatic()</code> 会被调用。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MethodTest</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($name, $arguments)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 注意: $name 的值区分大小写</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Calling object method '$name' "</span></span><br><span class="line">             . implode(<span class="string">', '</span>, $arguments). <span class="string">"\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**  PHP 5.3.0之后版本  */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__callStatic</span><span class="params">($name, $arguments)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 注意: $name 的值区分大小写</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Calling static method '$name' "</span></span><br><span class="line">             . implode(<span class="string">', '</span>, $arguments). <span class="string">"\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$obj = <span class="keyword">new</span> MethodTest;</span><br><span class="line">$obj-&gt;runTest(<span class="string">'in object context'</span>); <span class="comment"># Calling object method 'runTest' in object context</span></span><br><span class="line"></span><br><span class="line">MethodTest::runTest(<span class="string">'in static context'</span>);  <span class="comment"># Calling static method 'runTest' in static context</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="toString-clone-debugInfo"><a href="#toString-clone-debugInfo" class="headerlink" title="__toString __clone __debugInfo"></a><code>__toString</code> <code>__clone</code> <code>__debugInfo</code></h2><p><code>__toString</code> 类被当成字符串时的回应方法</p>
+<p><code>__clone</code> 当对象复制完成时调用</p>
+<p><code>__debugInfo</code> 打印所需调试信息,该方法在PHP 5.6.0及其以上版本才可以用</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $sex;</span><br><span class="line">    <span class="keyword">public</span> $name;</span><br><span class="line">    <span class="keyword">public</span> $age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($name = <span class="string">""</span>, $age = <span class="number">25</span>, $sex = <span class="string">'男'</span>)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = $name;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;age  = $age;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;sex  = $sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'姓名：'</span> . <span class="keyword">$this</span>-&gt;name . <span class="string">',性别：'</span> . <span class="keyword">$this</span>-&gt;sex . <span class="string">',年龄：'</span> . <span class="keyword">$this</span>-&gt;age . PHP_EOL;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__clone</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">'你正在克隆对象'</span>, PHP_EOL;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__debugInfo</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> [</span><br><span class="line">            <span class="string">'name'</span> =&gt; <span class="keyword">$this</span>-&gt;name,</span><br><span class="line">            <span class="string">'sex'</span>  =&gt; <span class="keyword">$this</span>-&gt;sex,</span><br><span class="line">            <span class="string">'age'</span>  =&gt; <span class="keyword">$this</span>-&gt;age,</span><br><span class="line">        ];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$zhang = <span class="keyword">new</span> Person(<span class="string">'张三'</span>);</span><br><span class="line"><span class="keyword">echo</span> $zhang; <span class="comment"># 姓名：张三,性别：男,年龄：25</span></span><br><span class="line"></span><br><span class="line">$lisi = <span class="keyword">clone</span> $zhang; <span class="comment"># Person::__clone你正在克隆对象</span></span><br><span class="line"></span><br><span class="line">var_dump($lisi);</span><br><span class="line"><span class="comment">/*object(Person)#2 (3) &#123;</span></span><br><span class="line"><span class="comment">    ["name"]=&gt;</span></span><br><span class="line"><span class="comment">      string(6) "张三"</span></span><br><span class="line"><span class="comment">    ["sex"]=&gt;</span></span><br><span class="line"><span class="comment">      string(3) "男"</span></span><br><span class="line"><span class="comment">    ["age"]=&gt;</span></span><br><span class="line"><span class="comment">      int(25)</span></span><br><span class="line"><span class="comment">&#125;*/</span></span><br></pre></td></tr></table></figure>
+<h2 id="autoload"><a href="#autoload" class="headerlink" title="__autoload"></a><code>__autoload</code></h2><p><code>__autoload</code> 尝试加载未定义的类,spl_autoload_register已实现</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * 文件autoload_demo.php </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__autoload</span><span class="params">($className)</span> </span>&#123; </span><br><span class="line">  $filePath = “project/<span class="class"><span class="keyword">class</span>/</span>&#123;$className&#125;.php”; </span><br><span class="line">  <span class="keyword">if</span> (is_readable($filePath)) &#123; </span><br><span class="line">    <span class="keyword">require</span>($filePath); </span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="sleep-wakeup"><a href="#sleep-wakeup" class="headerlink" title="__sleep  __wakeup"></a><code>__sleep</code>  <code>__wakeup</code></h2><p><code>__sleep</code> 执行serialize()时，先会调用这个函数</p>
+<p><code>__wakeup</code> 执行unserialize()时，先会调用这个函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $sex;</span><br><span class="line">    <span class="keyword">public</span> $name;</span><br><span class="line">    <span class="keyword">public</span> $age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($name=<span class="string">""</span>, $age=<span class="number">25</span>, $sex=<span class="string">'男'</span>)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = $name;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;age = $age;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;sex = $sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> array</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__sleep</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"当在类外部使用serialize()时会调用这里的__sleep()方法"</span>,PHP_EOL;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = base64_encode(<span class="keyword">$this</span>-&gt;name);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">array</span>(<span class="string">'name'</span>, <span class="string">'age'</span>); <span class="comment">// 这里必须返回一个数值，里边的元素表示返回的属性名称</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * __wakeup</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"当在类外部使用unserialize()时会调用这里的__wakeup()方法"</span>,PHP_EOL;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;sex = <span class="string">'男'</span>;</span><br><span class="line">        <span class="comment">// 这里不需要返回数组</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$person = <span class="keyword">new</span> Person(<span class="string">'小明'</span>); <span class="comment">// 初始赋值</span></span><br><span class="line">var_dump(serialize($person));</span><br><span class="line">var_dump(unserialize(serialize($person)));</span><br></pre></td></tr></table></figure>
+<h2 id="魔术常量"><a href="#魔术常量" class="headerlink" title="魔术常量"></a>魔术常量</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by crontabMonitor.</span></span><br><span class="line"><span class="comment"> * User: Liupeng</span></span><br><span class="line"><span class="comment"> * Date: 2018-10-10 16:05</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Hi</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="keyword">__LINE__</span>, PHP_EOL; <span class="comment"># 10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="keyword">__FILE__</span>, PHP_EOL; <span class="comment"># /mnt/hgfs/workspace/crontabMonitor/Person.php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="keyword">__DIR__</span>, PHP_EOL; <span class="comment"># /mnt/hgfs/workspace/crontabMonitor</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="keyword">__FUNCTION__</span>, PHP_EOL; <span class="comment"># Hi\TraitTest</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">trait</span> TraitTest</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">getTrait</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> __TRAIT__, PHP_EOL;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">TraitTest::getTrait(); <span class="comment"># Hi\TraitTest</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConstantsPredefined</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取类名称</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getClass</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">__CLASS__</span>, PHP_EOL; <span class="comment"># Hi\ConstantsPredefined</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 方法名</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getMethod</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">__FUNCTION__</span>, PHP_EOL; <span class="comment"># getMethod</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">__METHOD__</span>, PHP_EOL; <span class="comment"># Hi\ConstantsPredefined::getMethod</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取命名空间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getNameSpace</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">__NAMESPACE__</span>, PHP_EOL; <span class="comment"># Hi</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$constantsPredefined = <span class="keyword">new</span> \Hi\ConstantsPredefined();</span><br><span class="line">$constantsPredefined-&gt;getClass();</span><br><span class="line">$constantsPredefined-&gt;getMethod();</span><br><span class="line">$constantsPredefined-&gt;getNameSpace();</span><br></pre></td></tr></table></figure>
+<p>记忆<code>dir/file/line/namesapace/class/method/trait/function</code></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/hexo/Qiniu.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/php/fpm_count.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

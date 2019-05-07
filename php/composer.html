@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>composer笔记 | 刘鹏--博客</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="php,mysql,centos">
+  
+
+  <meta name="description" content="是 PHP 用来管理依赖（dependency）关系的工具。你可以在自己的项目中声明所依赖的外部工具库（libraries），Composer 会帮你安装这些依赖的库文件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="composer笔记">
+<meta property="og:url" content="https://klauspeng.github.io/php/composer.html">
+<meta property="og:site_name" content="刘鹏--博客">
+<meta property="og:description" content="是 PHP 用来管理依赖（dependency）关系的工具。你可以在自己的项目中声明所依赖的外部工具库（libraries），Composer 会帮你安装这些依赖的库文件。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/klauspeng/notes/raw/master/img/composer.png">
+<meta property="og:updated_time" content="2019-05-07T03:48:35.854Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="composer笔记">
+<meta name="twitter:description" content="是 PHP 用来管理依赖（dependency）关系的工具。你可以在自己的项目中声明所依赖的外部工具库（libraries），Composer 会帮你安装这些依赖的库文件。">
+<meta name="twitter:image" content="https://github.com/klauspeng/notes/raw/master/img/composer.png">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cben" rel="stylesheet">
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#官网"><span class="toc-text">官网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自动加载"><span class="toc-text">自动加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令行"><span class="toc-text">命令行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#包版本"><span class="toc-text">包版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化自动加载"><span class="toc-text">优化自动加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局配置镜像"><span class="toc-text">全局配置镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增加自定义命名空间"><span class="toc-text">增加自定义命名空间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自动引入文件"><span class="toc-text">自动引入文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加速–linux"><span class="toc-text">加速–linux</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-php/composer" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">composer笔记</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.04.25</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>KlausPeng</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>是 PHP 用来管理依赖（dependency）关系的工具。你可以在自己的项目中声明所依赖的外部工具库（libraries），Composer 会帮你安装这些依赖的库文件。<br><a id="more"></a></p>
+<h2 id="官网"><a href="#官网" class="headerlink" title="官网"></a><a href="http://www.phpcomposer.com/" target="_blank" rel="noopener">官网</a></h2><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>依赖管理，不是包管理器<br>声明依赖关系： 创建composer.json的文件<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"require"</span>: &#123;</span><br><span class="line">        <span class="attr">"monolog/monolog"</span>: <span class="string">"1.2.*"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行<code>composer install</code>即可<br><img src="https://github.com/klauspeng/notes/raw/master/img/composer.png" alt=""></p>
+<h2 id="自动加载"><a href="#自动加载" class="headerlink" title="自动加载"></a>自动加载</h2><p>除了库的下载，Composer 还准备了一个自动加载文件，它可以加载 Composer 下载的库中所有的类文件。<br>使用它，你只需要将下面这行代码添加到你项目的引导文件中：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="string">'vendor/autoload.php'</span>;</span><br></pre></td></tr></table></figure></p>
+<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><ol>
+<li>初始化 init - - 参数</li>
+<li>安装 install - - 参数</li>
+<li>更新 update - - 参数</li>
+<li>申明依赖 require - - 参数</li>
+<li>全局执行 global</li>
+<li>搜索 search - - 参数</li>
+<li>展示 show - - 参数</li>
+<li>依赖性检测 depends - - 参数</li>
+<li>有效性检测 validate</li>
+<li>依赖包状态检测 status</li>
+<li>自我更新 self-update - - 参数</li>
+<li>更改配置 config - - 使用方法 - - 参数 - - 修改包来源</li>
+<li>创建项目 create-project - - 参数</li>
+<li>打印自动加载索引 dump-autoload - - 参数</li>
+<li>查看许可协议 licenses</li>
+<li>执行脚本 run-script</li>
+<li>诊断 diagnose</li>
+<li>归档 archive - - 参数</li>
+<li>获取帮助信息 help</li>
+</ol>
+<h2 id="包版本"><a href="#包版本" class="headerlink" title="包版本"></a>包版本</h2><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>确切版本号</td>
+<td><code>1.0.2</code></td>
+</tr>
+<tr>
+<td>区间</td>
+<td><code>&gt;=1.0,&lt;1.1</code> </td>
+</tr>
+<tr>
+<td>通配符</td>
+<td><code>1.0.*</code> 相当于 <code>&gt;=1.0,&lt;1.1</code></td>
+</tr>
+<tr>
+<td>赋值运算符</td>
+<td><code>~1.2</code> 相当于 <code>&gt;=1.2,&lt;2.0</code> (指定最低版本,允许版本号的最后一位数字上升) <br> <code>^0.3</code> 相当于 <code>&gt;=0.3.0,&lt;0.4.0</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="优化自动加载"><a href="#优化自动加载" class="headerlink" title="优化自动加载"></a>优化自动加载</h2><p><code>composer dump-autoload --optimize</code></p>
+<p>转换 PSR-0/4 autoloading 到 classmap 可以获得更快的加载支持。<br>特别是在生产环境下建议这么做，但由于运行需要一些时间，因此并没有作为默认值。</p>
+<h2 id="全局配置镜像"><a href="#全局配置镜像" class="headerlink" title="全局配置镜像"></a>全局配置镜像</h2><p>官方： <code>composer config -g repo.packagist composer https://packagist.org</code></p>
+<p>中国： <code>composer config -g repo.packagist composer https://packagist.phpcomposer.com</code></p>
+<h2 id="增加自定义命名空间"><a href="#增加自定义命名空间" class="headerlink" title="增加自定义命名空间"></a>增加自定义命名空间</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">"autoload": &#123;</span><br><span class="line">  "psr-4" : &#123;</span><br><span class="line">    "Commands\\" : "app/commands"</span><br><span class="line">  &#125;,</span><br><span class="line">   "psr-0" : &#123;</span><br><span class="line">    "Commands" : "app/commands"</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行命令：<code>composer dumpautoload</code></p>
+<h2 id="自动引入文件"><a href="#自动引入文件" class="headerlink" title="自动引入文件"></a>自动引入文件</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">"autoload": &#123;</span><br><span class="line">  "files" : &#123;</span><br><span class="line">    <span class="string">"/path/to/file/function.php"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="加速–linux"><a href="#加速–linux" class="headerlink" title="加速–linux"></a>加速–linux</h2><p><a href="https://github.com/hirak/prestissimo" target="_blank" rel="noopener">prestissimo</a></p>
+<p>虚拟机自测 556s-&gt;168s! 效果还不错~</p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">扫一扫，支持我</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr/qr_wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr/qr_alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/redis/php_redis.html">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/php/php-log.html">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+
+   
+      <div class="git"></div>
+   
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="ROUND_RECT" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
